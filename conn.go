@@ -91,3 +91,27 @@ func newNode(ctx context.Context, port int, topicID string) (*Node, error) {
 
 	return node, nil
 }
+
+func (n *Node) connectToNode(ctx context.Context, peerAddr string) error {
+	addrInfo, err := peer.AddrInfoFromString(peerAddr)
+	if err != nil {
+		return err
+	}
+
+	n.mux.Lock()
+	n.Peers[addrInfo.ID] = addrInfo
+	n.mux.Unlock()
+
+	n.host.Peerstore().AddAddr(addrInfo.ID, addrInfo.Addrs[0], peerstore.AddressTTL)
+
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
+
+	if err = n.host.Connect(ctx, *addrInfo); err != nil {
+		return err
+	}
+
+	fmt.Printf("successfully connect to peer with id: %s\n", addrInfo.ID.String())
+
+	return nil
+}
