@@ -25,9 +25,8 @@ import (
 
 type (
 	Request struct {
-		FilePath  string `json:"filepath"`
-		StrNumber int    `json:"str_number"`
-		ToContent string `json:"content"`
+		From    string          `json:"from"`
+		Payload json.RawMessage `json:"payload"`
 	}
 
 	NodeType string
