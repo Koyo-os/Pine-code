@@ -78,7 +78,7 @@ func newNode(ctx context.Context, port int, topicID string) (*Node, error) {
 		PubSub: ps,
 		Topic:  topic,
 		Sub:    sub,
-		ctx:    ctx,
+		Ctx:    ctx,
 		Peers:  make(map[peer.ID]*peer.AddrInfo),
 	}
 
