@@ -115,3 +115,23 @@ func (n *Node) connectToNode(ctx context.Context, peerAddr string) error {
 
 	return nil
 }
+
+func (n *Node) listen(ch chan Request, cherr chan error) {
+	for {
+		msg, err := n.Sub.Next(n.ctx)
+		if err != nil {
+			if err == context.Canceled {
+				return
+			}
+
+			cherr <- err
+		}
+
+		var req Request
+		if err = json.Unmarshal(msg.GetData(), &req); err != nil {
+			cherr <- err
+		}
+
+		ch <- req
+	}
+}
